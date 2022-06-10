@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .table {
+      border: 1px solid #ddd;
+      padding: 0 1.5rem;
+      padding: 2rem;
+    }
+
+    .title {
+      font-size: 1.5rem;
+      color: #555;
+      margin-top: 0;
+
+    }
+
+    .description {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #777;
+      margin-top: 0;
+    }
+
+    .btn-content {
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn {
+      background-color: #8300E3;
+      color: #ffffff !important;
+      font-weight: 700;
+      padding: 0.5rem;
+      border-radius: 0.2rem;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <Table class="table">
+      <tbody>
+        <tr>
+          <td>
+            <h1 class="title">Olá, {{name}}!</h1>
+            <p class="description">Clique no botão abaixo para confirmar a criação da sua conta em nosso APP.</p>
+          </td>
+        </tr>
+      </tbody>
+      <tr>
+        <td>
+          <table>
+            <tbody>
+              <tr>
+                <td class="btn-content">
+                  <a href="https://www.google.com" target="_blank" class="btn">Confirmar Cadastro</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+      </tr>
+    </table>
+  </div>
+</body>
+
+</html>
