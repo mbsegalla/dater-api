@@ -2,7 +2,6 @@ import { model, Schema } from "mongoose";
 import { UserInterface } from "../../interfaces/userInterface";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import Joi from "joi";
 
 interface UserModel extends UserInterface, Document {
   comparePasswords(password: string): Promise<boolean>;
@@ -56,8 +55,9 @@ UserSchema.methods.formatDate = function (date) {
 UserSchema.methods.generateToken = function (): string {
   const decodedToken = {
     _id: this._id,
+    name: this.name,
     email: this.email,
-    dateofBirth: this.formatDate(this.dateOfBirth),
+    dateOfBirth: this.formatDate(this.dateOfBirth),
   };
 
   return jwt.sign(decodedToken, `${process.env.APP_SECRET}`, { expiresIn: '1d' });

@@ -1,21 +1,24 @@
 import { Request, Response } from "express";
 import "dotenv/config";
 import userModel from "../../models/userModel";
+import userOTPVerificationModel from "../../models/userOTPVerificationModel";
 import nodemailer from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
 import path from "path";
+import bcrypt from "bcrypt";
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  host: "smtp.gmail.com",
+  auth: {
+    user: process.env.AUTH_EMAIL,
+    pass: process.env.AUTH_PASSWORD,
+  }
+});
 
 class UserController {
   public async signup(req: Request, res: Response) {
     const { email, dateOfBirth } = req.body;
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      host: "smtp.gmail.com",
-      auth: {
-        user: process.env.AUTH_EMAIL,
-        pass: process.env.AUTH_PASSWORD,
-      }
-    });
 
     try {
       const userExists = await userModel.findOne({ email });
@@ -71,6 +74,9 @@ class UserController {
         }
       });
 
+      const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
+      console.log(otp)
+
       return res.status(201).json(data);
 
     } catch (err) {
@@ -79,9 +85,14 @@ class UserController {
   }
 
   public async signin(req: Request, res: Response) {
-    const { email, password } = req.body;
+    const { email, password, verified } = req.body;
 
     try {
+      const isVerified = await userModel.findOne({ verified });
+      if (isVerified === null) {
+        return res.status(400).json({ message: 'User is not verified' });
+      }
+
       const user = await userModel.findOne({ email });
       if (!user) {
         return res.status(400).send({ message: 'User not found!' });
