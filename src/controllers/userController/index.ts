@@ -35,6 +35,7 @@ class UserController {
       }
 
       const newUser = await userModel.create(req.body);
+
       const data = {
         message: 'User registered successfully',
         _id: newUser._id,
@@ -45,12 +46,24 @@ class UserController {
         verified: newUser.verified,
       };
 
+      const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
+
+      await userOTPVerificationModel.create({
+        userId: newUser._id,
+        otp: otp,
+        createdAt: new Date(),
+        expiredAt: new Date(new Date().getTime() + (60 * 60 * 1000)),
+      });
+
       const mailOptions = {
         from: "mbsegalla@gmail.com",
         to: newUser.email,
         subject: 'Confirmação de e-mail',
         template: 'email',
-        context: data,
+        context: {
+          name: data.name,
+          otp
+        }
       }
 
       const handlebarsOptions = {
@@ -74,9 +87,6 @@ class UserController {
         }
       });
 
-      const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
-      console.log(otp)
-
       return res.status(201).json(data);
 
     } catch (err) {
@@ -84,15 +94,44 @@ class UserController {
     }
   }
 
-  public async signin(req: Request, res: Response) {
-    const { email, password, verified } = req.body;
+  public async verifyOTP(req: Request, res: Response) {
+    const { userId, otp } = req.body;
 
     try {
-      const isVerified = await userModel.findOne({ verified });
-      if (isVerified === null) {
-        return res.status(400).json({ message: 'User is not verified' });
+      if (!userId || !otp) {
+        return res.status(400).json({ message: 'Error!' });
       }
 
+      const userOTPVerification = await userOTPVerificationModel.findOne({ userId });
+      if (!userOTPVerification) {
+        return res.status(400).json({ message: 'User not found!' });
+      }
+
+      const { expiredAt } = userOTPVerification;
+      if (expiredAt < new Date()) {
+        userOTPVerificationModel.deleteOne({ userId });
+        return res.status(400).json({ message: 'OTP has expired!' });
+      }
+
+      const validOTP = await userOTPVerification.compareOTP(otp);
+      if (!validOTP) {
+        return res.status(400).json({ message: 'Incorrect OTP!' });
+      }
+
+      await userModel.findOneAndUpdate({ _id: userId }, { verified: true });
+      await userOTPVerificationModel.deleteMany({ userId });
+
+      return res.status(200).json({ message: 'User verified successfully' });
+
+    } catch (err) {
+      res.status(422).json({ message: 'There are invalid fields!' });
+    }
+  }
+
+  public async signin(req: Request, res: Response) {
+    const { email, password } = req.body;
+
+    try {
       const user = await userModel.findOne({ email });
       if (!user) {
         return res.status(400).send({ message: 'User not found!' });
