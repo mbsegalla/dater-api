@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import "dotenv/config";
 import userModel from "../../models/userModel";
 import userOTPVerificationModel from "../../models/userOTPVerificationModel";
 import nodemailer from "nodemailer";
@@ -7,13 +6,14 @@ import hbs from "nodemailer-express-handlebars";
 import path from "path";
 import userForgotPasswordModel from "../../models/userForgotPasswordModel";
 import bcrypt from "bcrypt";
+import "dotenv/config";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   host: "smtp.gmail.com",
   auth: {
-    user: process.env.AUTH_EMAIL,
-    pass: process.env.AUTH_PASSWORD,
+    user: process.env.AUTH_EMAIL_USER,
+    pass: process.env.AUTH_EMAIL_PASSWORD,
   }
 });
 
@@ -58,7 +58,7 @@ class UserController {
       });
 
       const mailOptions = {
-        from: "mbsegalla@gmail.com",
+        from: process.env.EMAIL_USER,
         to: newUser.email,
         subject: 'Confirmação de e-mail',
         template: 'email',
@@ -71,11 +71,11 @@ class UserController {
       const handlebarsOptions = {
         viewEngine: {
           extName: '.hbs',
-          partialsDir: path.resolve('./src/templates/confirmationEmail'),
-          layoutsDir: path.resolve('./src/templates/confirmationEmail'),
+          partialsDir: path.resolve('./src/emailTemplates/userConfirmation'),
+          layoutsDir: path.resolve('./src/emailTemplates/userConfirmation'),
           defaultLayout: '',
         },
-        viewPath: path.resolve('./src/templates/confirmationEmail'),
+        viewPath: path.resolve('./src/emailTemplates/userConfirmation'),
         extName: '.hbs',
       }
 
@@ -175,10 +175,10 @@ class UserController {
       });
 
       const mailOptions = {
-        from: "mbsegalla@gmail.com",
+        from: process.env.EMAIL_USER,
         to: email,
-        subject: 'Confirmação de e-mail',
-        html: `<h1>Reset de senha ${otp}</h1>`
+        subject: 'Esqueceu sua senha',
+        html: `<h1>Código de validação ${otp}</h1>`
       }
 
       transporter.sendMail(mailOptions, function (error, info) {
