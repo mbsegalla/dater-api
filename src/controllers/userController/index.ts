@@ -101,7 +101,7 @@ class UserController {
 
     try {
       if (!userId || !otp) {
-        return res.status(400).json({ message: 'Error!' });
+        return res.status(400).json({ message: 'Invalid request!' });
       }
 
       const userOTPVerification = await userOTPVerificationModel.findOne({ userId });
@@ -201,7 +201,7 @@ class UserController {
 
     try {
       if (!userId || !otp) {
-        return res.status(400).json({ message: 'Error!' });
+        return res.status(400).json({ message: 'Invalid request!' });
       }
 
       const userForgotPassword = await userForgotPasswordModel.findOne({ userId });
@@ -234,7 +234,7 @@ class UserController {
 
     try {
       if (!userId || !password) {
-        return res.status(400).json({ message: 'Error!' });
+        return res.status(400).json({ message: 'Invalid resquest!' });
       }
 
       const newPassword = await bcrypt.hash(password, 8);

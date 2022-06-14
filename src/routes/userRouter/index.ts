@@ -1,6 +1,7 @@
 import { Router } from "express";
 import userController from "../../controllers/userController";
-import UserValidationMiddleware from "../../middlewares/userValidation";
+import passwordValidationMiddleware from "../../middlewares/passwordValidationMiddleware";
+import UserValidationMiddleware from "../../middlewares/userValidationMiddleware";
 
 const userRoute: Router = Router();
 
@@ -9,6 +10,6 @@ userRoute.post("/user-verify", userController.verifyOTP);
 userRoute.post("/signin", userController.signin);
 userRoute.post("/forgot-password", userController.sendEmailforgotPassword);
 userRoute.post("/forgot-password-verify", userController.verifyForgotPasswordOTP);
-userRoute.post("/reset-password", userController.resetPassword);
+userRoute.post("/reset-password", passwordValidationMiddleware.passwordValidation, userController.resetPassword);
 
 export default userRoute;
