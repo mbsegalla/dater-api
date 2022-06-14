@@ -9,6 +9,7 @@ interface UserOTPVerificationModel extends UserOTPVerificationInterface, Documen
 const UserOTPVerificationSchema = new Schema<UserOTPVerificationModel>({
   userId: {
     type: String,
+    required: true,
   },
   otp: {
     type: String,

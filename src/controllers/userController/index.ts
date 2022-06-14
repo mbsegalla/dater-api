@@ -5,6 +5,7 @@ import userOTPVerificationModel from "../../models/userOTPVerificationModel";
 import nodemailer from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
 import path from "path";
+import userForgotPasswordModel from "../../models/userForgotPasswordModel";
 import bcrypt from "bcrypt";
 
 const transporter = nodemailer.createTransport({
@@ -47,12 +48,13 @@ class UserController {
       };
 
       const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
+      const timeToExpire = 1;
 
       await userOTPVerificationModel.create({
         userId: newUser._id,
         otp: otp,
         createdAt: new Date(),
-        expiredAt: new Date(new Date().getTime() + (60 * 60 * 1000)),
+        expiredAt: new Date(new Date().getTime() + (timeToExpire * 60000)),
       });
 
       const mailOptions = {
@@ -109,7 +111,7 @@ class UserController {
 
       const { expiredAt } = userOTPVerification;
       if (expiredAt < new Date()) {
-        userOTPVerificationModel.deleteOne({ userId });
+        await userOTPVerificationModel.deleteMany({ userId });
         return res.status(400).json({ message: 'OTP has expired!' });
       }
 
@@ -133,6 +135,7 @@ class UserController {
 
     try {
       const user = await userModel.findOne({ email });
+
       if (!user) {
         return res.status(400).send({ message: 'User not found!' });
       }
@@ -146,6 +149,100 @@ class UserController {
         token: user.generateToken(),
         refreshToken: user.generateRefreshToken(),
       });
+    } catch (err) {
+      res.status(422).json({ message: 'There are invalid fields!' });
+    }
+  }
+
+  public async sendEmailforgotPassword(req: Request, res: Response) {
+    const { email } = req.body;
+
+    try {
+      const user = await userModel.findOne({ email });
+
+      if (!user) {
+        return res.status(400).send({ message: 'User not found!' });
+      }
+
+      const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
+      const timeToExpire = 1;
+
+      await userForgotPasswordModel.create({
+        userId: user._id,
+        otp: otp,
+        createdAt: new Date(),
+        expiredAt: new Date(new Date().getTime() + (timeToExpire * 60000)),
+      });
+
+      const mailOptions = {
+        from: "mbsegalla@gmail.com",
+        to: email,
+        subject: 'Confirmação de e-mail',
+        html: `<h1>Reset de senha ${otp}</h1>`
+      }
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+
+      return res.status(200).json({ message: 'Email sent successfully' });
+
+    } catch (err) {
+      res.status(422).json({ message: 'There are invalid fields!' });
+    }
+  }
+
+  public async verifyForgotPasswordOTP(req: Request, res: Response) {
+    const { userId, otp } = req.body;
+
+    try {
+      if (!userId || !otp) {
+        return res.status(400).json({ message: 'Error!' });
+      }
+
+      const userForgotPassword = await userForgotPasswordModel.findOne({ userId });
+      if (!userForgotPassword) {
+        return res.status(400).json({ message: 'User not found!' });
+      }
+
+      const { expiredAt } = userForgotPassword;
+      if (expiredAt < new Date()) {
+        await userForgotPasswordModel.deleteMany({ userId });
+        return res.status(400).json({ message: 'OTP has expired!' });
+      }
+
+      const validOTP = await userForgotPassword.compareOTP(otp);
+      if (!validOTP) {
+        return res.status(400).json({ message: 'Incorrect OTP!' });
+      }
+
+      await userForgotPasswordModel.findOneAndUpdate({ _id: userId }, { verified: true });
+
+      return res.status(200).json({ message: 'User verified successfully' });
+
+    } catch (err) {
+      res.status(422).json({ message: 'There are invalid fields!' });
+    }
+  }
+
+  public async resetPassword(req: Request, res: Response) {
+    const { userId, password } = req.body;
+
+    try {
+      if (!userId || !password) {
+        return res.status(400).json({ message: 'Error!' });
+      }
+
+      const newPassword = await bcrypt.hash(password, 8);
+      await userModel.findOneAndUpdate({ _id: userId }, { password: newPassword });
+      await userForgotPasswordModel.deleteMany({ userId });
+
+      return res.status(200).json({ message: 'Password reset successfully' });
+
     } catch (err) {
       res.status(422).json({ message: 'There are invalid fields!' });
     }

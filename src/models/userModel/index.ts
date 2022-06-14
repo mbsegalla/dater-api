@@ -35,7 +35,7 @@ const UserSchema = new Schema<UserModel>({
   verified: {
     type: Boolean,
     default: false,
-  }
+  },
 });
 
 UserSchema.pre<UserModel>("save", async function encryptPassword() {
@@ -64,11 +64,11 @@ UserSchema.methods.generateToken = function (): string {
 }
 
 UserSchema.methods.generateRefreshToken = function (): string {
-  const userId = {
+  const decodedRefreshToken = {
     _id: this._id,
   };
 
-  return jwt.sign(userId, `${process.env.APP_SECRET_REFRESH}`, { expiresIn: '1d' });
+  return jwt.sign(decodedRefreshToken, `${process.env.APP_SECRET_REFRESH}`, { expiresIn: '1d' });
 }
 
 export default model<UserModel>('User', UserSchema);
