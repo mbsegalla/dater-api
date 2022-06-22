@@ -67,7 +67,7 @@ class UserController {
     }
   }
 
-  public async verifyOTP(req: Request, res: Response) {
+  public async userVerify(req: Request, res: Response) {
     const { userId, otp } = req.body;
 
     try {
@@ -130,7 +130,7 @@ class UserController {
     }
   }
 
-  public async sendEmailforgotPassword(req: Request, res: Response) {
+  public async forgotPassword(req: Request, res: Response) {
     const { email } = req.body;
 
     try {
@@ -170,7 +170,7 @@ class UserController {
     }
   }
 
-  public async verifyForgotPasswordOTP(req: Request, res: Response) {
+  public async forgotPasswordVerify(req: Request, res: Response) {
     const { userId, otp } = req.body;
 
     try {
