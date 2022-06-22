@@ -1,21 +1,11 @@
 import { Request, Response } from "express";
 import userModel from "../../models/userModel";
 import userOTPVerificationModel from "../../models/userOTPVerification";
-import nodemailer from "nodemailer";
-import hbs from "nodemailer-express-handlebars";
 import path from "path";
 import userForgotPasswordModel from "../../models/userForgotPassword";
 import bcrypt from "bcrypt";
 import "dotenv/config";
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  host: "smtp.gmail.com",
-  auth: {
-    user: process.env.AUTH_EMAIL_USER,
-    pass: process.env.AUTH_EMAIL_PASSWORD,
-  }
-});
+import mail from "../../services/mail";
 
 class UserController {
   public async signup(req: Request, res: Response) {
@@ -57,39 +47,20 @@ class UserController {
         expiredAt: new Date(new Date().getTime() + (timeToExpire * 60000)),
       });
 
-      const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: newUser.email,
-        subject: 'Confirmação de e-mail',
-        template: 'email',
-        context: {
-          name: data.name,
-          otp
-        }
+      mail.to = newUser.email;
+      mail.subject = 'Confirmação de e-mail';
+      mail.partialsDir = path.resolve('./src/emailTemplates/userConfirmation');
+      mail.layoutsDir = path.resolve('./src/emailTemplates/userConfirmation');
+      mail.defaultLayout = "";
+      mail.viewPath = path.resolve('./src/emailTemplates/userConfirmation');
+      mail.context = {
+        name: data.name,
+        otp
       }
 
-      const handlebarsOptions = {
-        viewEngine: {
-          extName: '.hbs',
-          partialsDir: path.resolve('./src/emailTemplates/userConfirmation'),
-          layoutsDir: path.resolve('./src/emailTemplates/userConfirmation'),
-          defaultLayout: '',
-        },
-        viewPath: path.resolve('./src/emailTemplates/userConfirmation'),
-        extName: '.hbs',
-      }
+      const result = mail.sendMail();
 
-      transporter.use('compile', hbs(handlebarsOptions));
-
-      transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
-
-      return res.status(201).json(data);
+      return res.status(201).json({ data, result });
 
     } catch (err) {
       res.status(422).json({ message: 'There are invalid fields!' });
@@ -172,21 +143,6 @@ class UserController {
         otp: otp,
         createdAt: new Date(),
         expiredAt: new Date(new Date().getTime() + (timeToExpire * 60000)),
-      });
-
-      const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'Esqueceu sua senha',
-        html: `<h1>Código de validação ${otp}</h1>`
-      }
-
-      transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
       });
 
       return res.status(200).json({ message: 'Email sent successfully' });
