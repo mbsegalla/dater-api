@@ -48,7 +48,7 @@ class UserController {
       });
 
       mail.to = newUser.email;
-      mail.subject = 'Confirmação de e-mail';
+      mail.subject = 'Confirmação de cadastro';
       mail.partialsDir = path.resolve('./src/emailTemplates/userConfirmation');
       mail.layoutsDir = path.resolve('./src/emailTemplates/userConfirmation');
       mail.defaultLayout = "";
@@ -145,7 +145,19 @@ class UserController {
         expiredAt: new Date(new Date().getTime() + (timeToExpire * 60000)),
       });
 
-      return res.status(200).json({ message: 'Email sent successfully' });
+      mail.to = email;
+      mail.subject = 'Confirmação de reset de senha';
+      mail.partialsDir = path.resolve('./src/emailTemplates/resetPassword');
+      mail.layoutsDir = path.resolve('./src/emailTemplates/resetPassword');
+      mail.defaultLayout = "";
+      mail.viewPath = path.resolve('./src/emailTemplates/resetPassword');
+      mail.context = {
+        otp
+      }
+
+      const result = mail.sendMail();
+
+      return res.status(200).json({ message: 'Email sent successfully', result });
 
     } catch (err) {
       res.status(422).json({ message: 'There are invalid fields!' });
