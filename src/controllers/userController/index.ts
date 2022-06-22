@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import userModel from "../../models/userModel";
-import userOTPVerificationModel from "../../models/userOTPVerificationModel";
+import userOTPVerificationModel from "../../models/userOTPVerification";
 import nodemailer from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
 import path from "path";
-import userForgotPasswordModel from "../../models/userForgotPasswordModel";
+import userForgotPasswordModel from "../../models/userForgotPassword";
 import bcrypt from "bcrypt";
 import "dotenv/config";
 

@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { UserForgotPasswordInterface } from "../../interfaces/userForgotPasswordInterface";
+import { UserForgotPasswordInterface } from "../../interfaces/userForgotPassword";
 import bcrypt from "bcrypt";
 
 interface UserForgotPasswordModel extends UserForgotPasswordInterface, Document {
@@ -20,10 +20,6 @@ const UserForgotPasswordSchema = new Schema<UserForgotPasswordModel>({
   expiredAt: {
     type: Date,
   },
-  passwordVerified: {
-    type: Boolean,
-    default: false
-  }
 });
 
 UserForgotPasswordSchema.pre<UserForgotPasswordModel>("save", async function encryptOTP() {

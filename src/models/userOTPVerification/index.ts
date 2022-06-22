@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { UserOTPVerificationInterface } from "../../interfaces/userOTPVerificationInterface";
+import { UserOTPVerificationInterface } from "../../interfaces/userOTPVerification";
 import bcrypt from "bcrypt";
 
 interface UserOTPVerificationModel extends UserOTPVerificationInterface, Document {
