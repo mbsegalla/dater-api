@@ -4,8 +4,8 @@ import userOTPVerificationModel from "../../models/userOTPVerification";
 import path from "path";
 import userForgotPasswordModel from "../../models/userForgotPassword";
 import bcrypt from "bcrypt";
-import "dotenv/config";
 import mail from "../../services/mail";
+import "dotenv/config";
 
 class UserController {
   public async signup(req: Request, res: Response) {

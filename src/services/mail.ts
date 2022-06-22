@@ -1,6 +1,5 @@
 import * as nodemailer from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
-import path from "path";
 import config from "./config";
 
 class Mail {
