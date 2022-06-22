@@ -6,7 +6,7 @@ interface UserOTPVerificationModel extends UserOTPVerificationInterface, Documen
   compareOTP(otp: string): Promise<boolean>;
 };
 
-const UserOTPVerificationSchema = new Schema<UserOTPVerificationModel>({
+const UserVerificationSchema = new Schema<UserOTPVerificationModel>({
   userId: {
     type: String,
     required: true,
@@ -17,18 +17,20 @@ const UserOTPVerificationSchema = new Schema<UserOTPVerificationModel>({
   },
   createdAt: {
     type: Date,
+    default: Date.now,
   },
   expiredAt: {
     type: Date,
+    default: Date.now,
   }
 });
 
-UserOTPVerificationSchema.pre<UserOTPVerificationModel>("save", async function encryptOTP() {
+UserVerificationSchema.pre<UserOTPVerificationModel>("save", async function encryptOTP() {
   this.otp = await bcrypt.hash(this.otp, 10);
 });
 
-UserOTPVerificationSchema.methods.compareOTP = function (otp: string) {
+UserVerificationSchema.methods.compareOTP = function (otp: string) {
   return bcrypt.compare(otp, this.otp);
 }
 
-export default model<UserOTPVerificationModel>("UserOTPVerification", UserOTPVerificationSchema);
+export default model<UserOTPVerificationModel>("user-Verification", UserVerificationSchema);

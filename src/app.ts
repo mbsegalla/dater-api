@@ -42,7 +42,7 @@ export class App {
   }
 
   private database() {
-    mongoose.connect(`${process.env.MONGO_URL}`, { useUnifiedTopology: true, useNewUrlParser: true }).then(() => {
+    mongoose.connect(`${process.env.MONGO_URL}`, { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false }).then(() => {
       console.log("Database connected!");
     }).catch((err) => {
       console.log(err);

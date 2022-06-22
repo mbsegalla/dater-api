@@ -9,6 +9,7 @@ interface UserForgotPasswordModel extends UserForgotPasswordInterface, Document 
 const UserForgotPasswordSchema = new Schema<UserForgotPasswordModel>({
   userId: {
     type: String,
+    required: true,
   },
   otp: {
     type: String,
@@ -16,9 +17,15 @@ const UserForgotPasswordSchema = new Schema<UserForgotPasswordModel>({
   },
   createdAt: {
     type: Date,
+    default: Date.now,
   },
   expiredAt: {
     type: Date,
+    default: Date.now,
+  },
+  verified: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -30,4 +37,4 @@ UserForgotPasswordSchema.methods.compareOTP = function (otp: string) {
   return bcrypt.compare(otp, this.otp);
 }
 
-export default model<UserForgotPasswordModel>("UserForgotPassword", UserForgotPasswordSchema);
+export default model<UserForgotPasswordModel>("user-forgot-password", UserForgotPasswordSchema);

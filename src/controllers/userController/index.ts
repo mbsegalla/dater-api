@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
+import mail from "../../services/mail";
 import userModel from "../../models/userModel";
 import userOTPVerificationModel from "../../models/userOTPVerification";
-import path from "path";
 import userForgotPasswordModel from "../../models/userForgotPassword";
+import path from "path";
 import bcrypt from "bcrypt";
-import mail from "../../services/mail";
 import "dotenv/config";
 
 class UserController {
@@ -116,6 +116,11 @@ class UserController {
         return res.status(400).send({ message: 'Incorrect password!' });
       }
 
+      const { verified } = user;
+      if (verified !== true) {
+        return res.status(400).send({ message: 'User is not verified!' });
+      }
+
       return res.status(200).json({
         token: user.generateToken(),
         refreshToken: user.generateRefreshToken(),
@@ -143,6 +148,7 @@ class UserController {
         otp: otp,
         createdAt: new Date(),
         expiredAt: new Date(new Date().getTime() + (timeToExpire * 60000)),
+        verified: false
       });
 
       mail.to = email;
@@ -188,9 +194,9 @@ class UserController {
         return res.status(400).json({ message: 'Incorrect OTP!' });
       }
 
-      await userForgotPasswordModel.findOneAndUpdate({ _id: userId }, { verified: true });
+      await userForgotPasswordModel.findOneAndUpdate({ userId: userId }, { verified: true });
 
-      return res.status(200).json({ message: 'User verified successfully' });
+      return res.status(200).json({ message: 'Token verified' });
 
     } catch (err) {
       res.status(422).json({ message: 'There are invalid fields!' });
@@ -201,8 +207,19 @@ class UserController {
     const { userId, password } = req.body;
 
     try {
+      const user = await userForgotPasswordModel.findOne({ userId });
+
+      if (!user) {
+        return res.status(400).send({ message: 'User not found!' });
+      }
+
       if (!userId || !password) {
         return res.status(400).json({ message: 'Invalid resquest!' });
+      }
+
+      const { verified } = user;
+      if (verified !== true) {
+        return res.status(400).send({ message: 'Email is not verified!' });
       }
 
       const newPassword = await bcrypt.hash(password, 8);

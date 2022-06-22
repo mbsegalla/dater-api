@@ -3,5 +3,5 @@ export interface UserForgotPasswordInterface {
   otp: string;
   createdAt: Date;
   expiredAt: Date;
-  passwordVerified: boolean;
+  verified: boolean;
 }
