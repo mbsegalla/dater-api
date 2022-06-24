@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-import userRoute from "./routes/userRouter";
+import userRoute from "./routes/UserRouter";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "./swagger.json";
 import "dotenv/config";

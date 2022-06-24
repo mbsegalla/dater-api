@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { UserForgotPasswordInterface } from "../../interfaces/userForgotPassword";
+import { UserForgotPasswordInterface } from "../../interfaces/UserForgotPassword";
 import bcrypt from "bcrypt";
 
 interface UserForgotPasswordModel extends UserForgotPasswordInterface, Document {

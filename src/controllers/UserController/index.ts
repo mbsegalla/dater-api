@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import mail from "../../services/mail";
-import userModel from "../../models/userModel";
-import userOTPVerificationModel from "../../models/userOTPVerification";
-import userForgotPasswordModel from "../../models/userForgotPassword";
+import userModel from "../../models/UserModel";
+import userOTPVerificationModel from "../../models/UserOTPVerification";
+import userForgotPasswordModel from "../../models/UserForgotPassword";
 import path from "path";
 import bcrypt from "bcrypt";
 import "dotenv/config";

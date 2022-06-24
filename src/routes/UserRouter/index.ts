@@ -1,7 +1,7 @@
 import { Router } from "express";
-import userController from "../../controllers/userController";
-import passwordValidationMiddleware from "../../middlewares/passwordValidation";
-import UserValidationMiddleware from "../../middlewares/userValidation";
+import userController from "../../controllers/UserController";
+import passwordValidationMiddleware from "../../middlewares/PasswordValidation";
+import UserValidationMiddleware from "../../middlewares/UserValidation";
 
 const userRoute: Router = Router();
 
