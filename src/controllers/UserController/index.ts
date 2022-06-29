@@ -30,7 +30,6 @@ class UserController {
       const data = {
         message: 'User registered successfully',
         _id: newUser._id,
-        name: newUser.name,
         email: newUser.email,
         dateOfBirth: newUser.formatDate(newUser.dateOfBirth),
         createdAt: newUser.formatDate(newUser.createdAt),
@@ -54,7 +53,6 @@ class UserController {
       mail.defaultLayout = "";
       mail.viewPath = path.resolve('./src/emailTemplates/userConfirmation');
       mail.context = {
-        name: data.name,
         otp
       }
 
