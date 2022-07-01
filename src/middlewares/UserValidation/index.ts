@@ -14,7 +14,7 @@ class UserValidationMiddleware {
         "string.max": "Password length must be at most 30 characters long",
         "string.pattern.name": "Password must contain at least one lowercase letter, one uppercase letter, one number and one special character",
       }),
-      dateOfBirth: joi.date().required().messages({
+      birthDate: joi.date().required().messages({
         "date.empty": "Date of birth is required",
         "date.format": "Date of birth must be in the format DD-MM-YYYY",
         "date.base": "Date of birth must be a valid date",
