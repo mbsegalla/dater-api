@@ -3,7 +3,7 @@ export interface UserInterface {
   name: string;
   email: string;
   password: string;
-  dateOfBirth: Date;
+  birthDate: Date;
   createdAt: Date;
   verified: boolean;
 }

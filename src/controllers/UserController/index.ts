@@ -9,7 +9,7 @@ import "dotenv/config";
 
 class UserController {
   public async signup(req: Request, res: Response) {
-    const { email, dateOfBirth } = req.body;
+    const { email, birthDate } = req.body;
 
     try {
       const userExists = await userModel.findOne({ email });
@@ -18,9 +18,9 @@ class UserController {
       }
 
       const today = new Date();
-      const birthDate = new Date(dateOfBirth);
-      const age = today.getFullYear() - birthDate.getFullYear();
-      const monthToBeLegalAge = today.getMonth() - birthDate.getMonth();
+      const userBirthDate = new Date(birthDate);
+      const age = today.getFullYear() - userBirthDate.getFullYear();
+      const monthToBeLegalAge = today.getMonth() - userBirthDate.getMonth();
       if (age < 18 || (monthToBeLegalAge === 0)) {
         return res.status(400).json({ message: 'User must be 18 years old or older' });
       }
@@ -31,7 +31,7 @@ class UserController {
         message: 'User registered successfully',
         _id: newUser._id,
         email: newUser.email,
-        dateOfBirth: newUser.formatDate(newUser.dateOfBirth),
+        birthDate: newUser.formatDate(newUser.birthDate),
         createdAt: newUser.formatDate(newUser.createdAt),
         verified: newUser.verified,
       };

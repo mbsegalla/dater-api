@@ -20,7 +20,7 @@ const UserSchema = new Schema<UserModel>({
     type: String,
     required: true,
   },
-  dateOfBirth: {
+  birthDate: {
     type: Date,
     required: true,
   },
@@ -53,7 +53,7 @@ UserSchema.methods.generateToken = function (): string {
     _id: this._id,
     name: this.name,
     email: this.email,
-    dateOfBirth: this.formatDate(this.dateOfBirth),
+    birthDate: this.formatDate(this.birthDate),
   };
 
   return jwt.sign(decodedToken, `${process.env.APP_SECRET}`, { expiresIn: '1d' });
