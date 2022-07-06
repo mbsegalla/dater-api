@@ -51,7 +51,6 @@ UserSchema.methods.formatDate = function (date) {
 UserSchema.methods.generateToken = function (): string {
   const decodedToken = {
     _id: this._id,
-    name: this.name,
     email: this.email,
     birthDate: this.formatDate(this.birthDate),
   };
