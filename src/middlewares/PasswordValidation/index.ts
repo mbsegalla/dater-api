@@ -5,7 +5,7 @@ class PasswordValidationMiddleware {
   public passwordValidation(req: Request, res: Response, next: NextFunction) {
     const passwordValidate = joi.object().keys({
       userId: joi.string().required(),
-      password: joi.string().min(8).max(30).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'password').required().messages({
+      password: joi.string().min(8).max(30).regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-.]).{8,}$/, 'password').required().messages({
         "string.empty": "Password is required",
         "string.min": "Password length must be at least 8 characters long",
         "string.max": "Password length must be at most 30 characters long",
