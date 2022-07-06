@@ -44,7 +44,7 @@ UserSchema.methods.comparePasswords = function (password: string) {
 
 UserSchema.methods.formatDate = function (date) {
   const newDate = new Date(date);
-  let formattedDate = `${`0${newDate.getDate() + 1}`.slice(-2)}-${`0${newDate.getMonth() + 1}`.slice(-2)}-${newDate.getFullYear()}`;
+  const formattedDate = `${`0${newDate.getDate() + 1}`.slice(-2)}-${`0${newDate.getMonth() + 1}`.slice(-2)}-${newDate.getFullYear()}`;
   return formattedDate;
 }
 
