@@ -29,7 +29,7 @@ class UserController {
 
       const data = {
         message: 'User registered successfully',
-        _id: newUser._id,
+        userId: newUser._id,
         email: newUser.email,
         birthDate: newUser.formatDate(newUser.birthDate),
         createdAt: newUser.formatDate(newUser.createdAt),
