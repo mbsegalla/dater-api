@@ -79,8 +79,6 @@ class UserController {
       }
 
       const { expiredAt } = userOTPVerification;
-      console.log(expiredAt)
-      console.log(new Date())
       if (expiredAt < new Date()) {
         await userOTPVerificationModel.deleteMany({ userId });
         return res.status(400).json({ message: 'OTP has expired!' });
