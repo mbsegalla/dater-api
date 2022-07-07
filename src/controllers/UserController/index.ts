@@ -79,6 +79,8 @@ class UserController {
       }
 
       const { expiredAt } = userOTPVerification;
+      console.log(expiredAt)
+      console.log(new Date())
       if (expiredAt < new Date()) {
         await userOTPVerificationModel.deleteMany({ userId });
         return res.status(400).json({ message: 'OTP has expired!' });
@@ -121,7 +123,9 @@ class UserController {
 
       return res.status(200).json({
         token: user.generateToken(),
-        refreshToken: user.generateRefreshToken(),
+        refreshToken: {
+
+        },
       });
     } catch (err) {
       res.status(422).json({ message: 'There are invalid fields!' });
@@ -161,7 +165,13 @@ class UserController {
 
       const result = mail.sendMail();
 
-      return res.status(200).json({ message: 'Email sent successfully', result });
+      return res.status(200).json(
+        {
+          message: 'Email sent successfully',
+          userId: user._id,
+          result
+        }
+      );
 
     } catch (err) {
       res.status(422).json({ message: 'There are invalid fields!' });
